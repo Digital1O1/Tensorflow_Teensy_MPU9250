@@ -6,7 +6,7 @@ On October 15, 2019 Arduino had posted a [blog/tutorial](https://blog.arduino.cc
  
 The Nano 33 comes smack dab with numerous SMD components already soldered on in a nice, neat, little package.
  
-However if you're like me and have an ARM based board like the Teensy 4, an MPU-9250, and are itching to get into Machine Leanring, you're at the right spot.
+However if you're like me and have an ARM based board like the Teensy 4, an MPU-9250, and are itching to get into Machine Learning, you're at the right spot.
  
 The overarching goal for this repository will esentially "mimick" all the steps stated in the [Arduino blog post](https://blog.arduino.cc/2019/10/15/get-started-with-machine-learning-on-arduino/)
 and to get the Teensy to distinguish a punching motion from a flexing motion by sampling the incoming data from the MPU-9250
