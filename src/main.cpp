@@ -32,7 +32,7 @@
 #define NUM_SAMPLES 119
 #define NUM_AXES 7
 #define ACCEL_THRESHOLD 2.5
-#define LOOP_LIMIT 20
+#define SAMPLE_LIMIT 20
 /*
     CLOCK FOR TEENSY BOARD HAS TO BE AT 150 MHZ
     Reference Link : https://github.com/bolderflight/MPU9250/issues/63
@@ -159,7 +159,7 @@ void loop()
     }
 
     // Keeps track of counter and displays IMU data. Once max readings hits limit, counter resets
-    while ((samples_Read < number_Samples) && (num_loops < LOOP_LIMIT))
+    while ((samples_Read < number_Samples) && (num_loops < SAMPLE_LIMIT))
     {
       // Read data from IMU sensor
       read_IMU(&ax, &ay, &az, &gx, &gy, &gz);
