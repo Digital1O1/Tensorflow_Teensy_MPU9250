@@ -1,4 +1,4 @@
-## === [ ntroduction ] === 
+## === [ Introduction ] === 
 
 ### All of this was done in VS Code with the Platform IO extension
 
