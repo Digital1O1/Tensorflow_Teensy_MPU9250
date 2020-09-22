@@ -117,7 +117,7 @@ After you downloaded/installed Putty and determined which COM port is being used
 
 Once you exit out of Putty, a log file will be generated.
 
-### --- [ Step 1b : Log --> Txt --> CSV ] ---
+### --- [ Step 1b : Log file --> CSV file ] ---
 
 So now we'll have to change the log file that has all the IMU data to a TXT file, then a CSV file in order to 'feed' the data to the Google Colab Python script I mentioned earlier.
 
