@@ -162,7 +162,7 @@ After uploading the code to the Teensy board, open your serial monitor and when 
 
 ![image](https://user-images.githubusercontent.com/39348633/93834049-22ca2100-fc40-11ea-8ce9-1a182ddc0444.png)
 
-### PLEASE KEEP IN MIND
+### ---- PLEASE KEEP IN MIND ----
 
 The Teeny's ability to accurately predict the gestures ISN'T GOING TO BE PERFECT
 
