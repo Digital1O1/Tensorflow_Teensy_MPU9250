@@ -151,4 +151,23 @@ After running each cell, the Google Colab will generate a Model.h file that cont
 
 ### --- [ Step 3 : Upload Modified IMU_Classifier to Teensy ] ---
 
+In both the Arduino IDE and VS Code, make sure to include the model.h header file in the same folder as the main.cpp/sketch is located
+ * Just in case if that sounded vauge for the VS Code users
+   * Open VS Code --> File --> Open Folder --> Pick IMU_Classifier --> Go to File Explorer --> Src --> Right Click main.cpp --> Click "Reveal in File Explorer --> Drag and Drop      model.h in same folder
+   * make sure to use : #include "model.h"
+   
+After uploading the code to the Teensy board, open your serial monitor and when you flex, or throw a punch the serial monitor should return values that look something like this
 
+![image](https://user-images.githubusercontent.com/39348633/93834049-22ca2100-fc40-11ea-8ce9-1a182ddc0444.png)
+
+### PLEASE KEEP IN MIND
+
+The Teeny's ability to accurately predict the gestures ISN'T GOING TO BE PERFECT
+
+There's still a lot that I have to teach myself regarding machine learning, A.I, and all the nitty gritty details in between.
+
+So to put it short as of September 21st, 2020, I will continue to refine/revise this repo as I learn more down the road.
+
+So in the meantime, this is all I have for now.
+
+And I really hope this helps someone out there on the interwebs.
