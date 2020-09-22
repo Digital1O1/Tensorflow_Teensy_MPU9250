@@ -71,7 +71,7 @@ For those wanting to know what FSYNC/ADO/SDA and SCL mean, the following screens
  
 ## === [ Everything Is Wired Up Now What? ] ===
 
-### --- [ Step 1 : SAMPLE IMU DATA ] ---
+### --- [ Step 1 : SAMPLE IMU DATA WITH RECORD_IMU CODE] ---
 
 ![image](https://user-images.githubusercontent.com/39348633/93822988-ad058b80-fc26-11ea-8383-e3c332253ab8.png)
 
@@ -79,13 +79,15 @@ In the Arduino ML blog highlights the Nano 33's ML capability of recongizing if 
 
 In the Google Colab Python script that will be discussed later, takes 119 individual IMU readings and consideres that ONE sample.
 
-With how the Teensy code is set up, it'll stop sampling the MPU-9250 data after 20 samples. 
+With how the Record_IMU code is set up, it'll stop sampling the MPU-9250 data after 20 samples. 
 
-WHEN SAMPLING THE IMU DATA JUST KEEP GOING THROUGH THE MOTIONS UNTIL THE SAMPLING STOPS
+After uploading the Record_IMU code to the Teensy make sure throughout the sampling process TO KEEP GOING THROUGH THE MOTIONS. 
+
+The program will automatically stop after taking 20 samples.
 
 Any "second-guessing" can/will affect the Teensy's "ability" to recognize the gesture properly.
 
-For those who are wanting to sample more/less can do so by changing the "SAMPLE_LIMIT" numerical value.
+For those who are wanting to sample more/less can do so by changing the "SAMPLE_LIMIT" numerical value as shown in the screenshot above.
 
 When switching from sampling one gesture to another, the only thing you have to do is just :
  * Exit out of Putty
