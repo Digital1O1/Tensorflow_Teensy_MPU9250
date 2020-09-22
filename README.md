@@ -1,6 +1,6 @@
 ## === [ Introduction ] === 
 
-### All of this was done in VS Code with the Platform IO extension
+### All of this was done in VS Code with the [Platform IO extension](https://platformio.org/platformio-ide)
 
 This can still be used for the Arduino IDE, to do so :
  * go to src --> Main.cpp and comment out the #include <Arduino.h> everything will still work
@@ -73,17 +73,33 @@ For those wanting to know what FSYNC/ADO/SDA and SCL mean, the following screens
 
 ### --- [ Step 1 : SAMPLE IMU DATA ] ---
 
-![image](https://user-images.githubusercontent.com/39348633/93728765-fc947a80-fb86-11ea-8c2c-7d4faab644ac.png)
+![image](https://user-images.githubusercontent.com/39348633/93822988-ad058b80-fc26-11ea-8383-e3c332253ab8.png)
 
-In the Google Colab Python script that will be discussed later takes 119 individual IMU readings and consideres that ONE sample.
+In the Arduino ML blog highlights the Nano 33's ML capability of recongizing if the user is either flexing with the board in hand, or throwing a punch, which is also achievable in this repository. 
 
-The way how the Teeny/Arduino code is currently set up once 20 sample are taken then sampling is halted.
+In the Google Colab Python script that will be discussed later, takes 119 individual IMU readings and consideres that ONE sample.
+
+With how the Teensy code is set up, it'll stop sampling the MPU-9250 data after 20 samples. 
+
+WHEN SAMPLING THE IMU DATA JUST KEEP GOING THROUGH THE MOTIONS UNTIL THE SAMPLING STOPS
+
+Any "second-guessing" can/will affect the Teensy's "ability" to recognize the gesture properly.
+
+For those who are wanting to sample more/less can do so by changing the "SAMPLE_LIMIT" numerical value.
+
+When switching from sampling one gesture to another, the only thing you have to do is just :
+ * Exit out of Putty
+ * Press the onboard "Reset" button on the Teesny circled in red in the screenshot below
+ * Continue sampling IMU data with whatever motion/gesture you have left.
+ 
+ ![image](https://user-images.githubusercontent.com/39348633/93826271-80547280-fc2c-11ea-9561-bce5e5fea960.png)
+
 
 ### --- [ Step 1a : CONVERT DATA TO CSV FILE] ---
 
 So I used a terminal emulator called [PuTTy](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) to "rip" the IMU data.
 
-To do so, you'll have to know which COM port your Teensy board is doing, which can be found in you device manager --> Ports (COM & LPT)
+To do so, you'll have to know which COM port your Teensy board is doing before hand, which can be found in you device manager --> Ports (COM & LPT)
 
 After you downloaded/installed Putty and determined which COM port is being used, open Putty and change the following : 
 
@@ -97,7 +113,42 @@ After you downloaded/installed Putty and determined which COM port is being used
      
  The screenshots below can be used for reference
  
- ![image](https://user-images.githubusercontent.com/39348633/93729467-2ef3a700-fb8a-11ea-9159-7315c5d26f16.png)
- ![image](https://user-images.githubusercontent.com/39348633/93729553-a1fd1d80-fb8a-11ea-91c1-7723b6e8a11e.png)
+![image](https://user-images.githubusercontent.com/39348633/93729467-2ef3a700-fb8a-11ea-9159-7315c5d26f16.png)![image](https://user-images.githubusercontent.com/39348633/93821435-2bacf980-fc24-11ea-86dd-8e407940872f.png)
+
+Once you exit out of Putty, a log file will be generated.
+
+### --- [ Step 1b : Log --> Txt --> CSV ] ---
+
+So now we'll have to change the log file that has all the IMU data to a TXT file, then a CSV file in order to 'feed' the data to the Google Colab Python script I mentioned earlier.
+
+In order to do so, you'll have to enable 'Show file extensions"
+
+To do this in Windows 10 is as followed :
+ * Go to your search bar and type "File Explorer"
+ * Click on "VIEW" in the File explorer 
+ * Check the box next to "File name extension" 
+ * Close the "File explorer"
+
+A better write up on the matter can be found [here](https://support.winzip.com/hc/en-us/articles/115011457948-How-to-configure-Windows-to-show-file-extensions-and-hidden-files)
+
+NEXT STEP --> Right click and rename the "IMU_Data.log" file to --> "IMU_Data.csv" 
+
+A warning will pop up, but it's not a big deal from my experience.
+
+So now with the CSV files ready to go, we can then upload them to the Google Colab to generate the "weights" which will help distinguish if the user is either flexing or punching.
+
+### --- [ Step 2 : Using Google Colab To Generate "Weights" ] ---
+
+The original Google Colab that's being used for the Arduino ML tutorial can be found [here](https://colab.research.google.com/github/arduino/ArduinoTensorFlowLiteTutorials/blob/master/GestureToEmoji/arduino_tinyml_workshop.ipynb) 
+
+I also uploaded my own [Google Colab](https://github.com/Digital1O1/Tensorflow_Teensy_MPU9250/blob/master/Teensy_ML_Script.ipynb) that has notes that I've written in order to get a better understanding of what's going on.
+
+Anyways... To upload the CSV files, you just simply drag and drop them into the area circled in red
+
+![image](https://user-images.githubusercontent.com/39348633/93828362-c3b0e000-fc30-11ea-8596-bc94dc002d5c.png)
+
+After running each cell, the Google Colab will generate a Model.h file that contains all the "weights" to be used in the IMU_Classifier.ino/cpp file
+
+### --- [ Step 3 : Upload Modified IMU_Classifier to Teensy ] ---
 
 
