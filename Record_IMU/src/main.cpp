@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 /*
-  [] ========== SPI Connection ========== []
+  [] ========== SPI Connection to Teensy 4 board ========== []
 
   FSync     --> GND
   NCS == CS --> 10
@@ -9,23 +9,21 @@
   SDA       --> 11
   SCL       --> 13
 
-  [] ========== Github Reference ========== []
+  [] ========== MPU-9250 Library ========== []
 
   https://github.com/bolderflight/MPU9250
 
-  [] ========== Changing Serial Baud Rate ========== []
+  [] ========== Changing Serial Baud Rate in Visual Code ========== []
 
-  Go to platformio.ini
+  Go to 'Explorer' --> platformio.ini
 
-  Enter : monitor_speed = baudRate
+  Enter the following 
 
-  [] ========== Changing Clock Speed ========== []
+  monitor_speed = 115200
+  board_build.f_cpu = 60000000L
 
-  Reference Link : https://community.platformio.org/t/teensy-3-1-3-2-cpu-change-clock-speed/253
-
-  [] ========== Stuff on Arduino Side ========== []
-
-  Make sure in Tools --> USB Type --> Raw HID is selected
+  ** Additional documentation about changing Teensy clock speed
+  https://community.platformio.org/t/teensy-3-1-3-2-cpu-change-clock-speed/253
 */
 
 #include "MPU9250.h"
@@ -38,7 +36,7 @@
     CLOCK FOR TEENSY BOARD HAS TO BE AT 150 MHZ
     Reference Link : https://github.com/bolderflight/MPU9250/issues/63
 */
-//Teensy pins
+// Designate which digital pin will trigger CS to low for MPU9250 to send data back to Teensy
 MPU9250 IMU(SPI, 10);
 
 int status;
@@ -51,9 +49,10 @@ float ax, ay, az, gx, gy, gz = 0.0;
 
 void read_IMU(float *ax, float *ay, float *az, float *gx, float *gy, float *gz)
 {
-  // read the sensor
+  // Signal the MPU9250 to be read
   IMU.readSensor();
 
+  // Subtract values saved in baseline[] arrays from 'incoming' values --> Zeros the MPU relative to where it was calibrated
   *ax = (IMU.getAccelX_mss() - baseline[0]);
   *ay = (IMU.getAccelY_mss() - baseline[1]);
   *az = (IMU.getAccelZ_mss() - baseline[2]);
@@ -63,6 +62,7 @@ void read_IMU(float *ax, float *ay, float *az, float *gx, float *gy, float *gz)
 }
 void display_Data()
 {
+  // Display data via serial monitor
   Serial.print(ax);
   Serial.print(',');
   Serial.print(ay);
@@ -79,7 +79,7 @@ void display_Data()
 //This will 'zero' out the IMU sensor in relation to whatever surface it's resting on
 void calibrate()
 {
-
+  // Read 10 gyroscopic/accelerometer values
   for (int i = 0; i < 10; i++)
   {
     ax = IMU.getAccelX_mss();
@@ -92,7 +92,7 @@ void calibrate()
     delay(25);
   }
 
-  // This will 'zero' out everything
+  // Store the values read in an array
   baseline[0] = ax;
   baseline[1] = ay;
   baseline[2] = az;
@@ -103,12 +103,16 @@ void calibrate()
 
 bool motionDetected(float ax, float ay, float az)
 {
+  // Read the MPU data
   read_IMU(&ax, &ay, &az, &gx, &gy, &gz);
+
+  // If X/Y/Z acceleromotor values exceed ACCEL_THRESHOLD --> Spit out MPU data to serial montior
   if (abs(ax) + abs(ay) + abs(az) > ACCEL_THRESHOLD)
   {
     return true;
   }
 
+  // If accelerometer data doesn't exceed threshold, just delay 150 ms
   else
   {
     //Serial.print("Current Acceleration : "); Serial.println(abs(ax + ay + az));
@@ -117,6 +121,7 @@ bool motionDetected(float ax, float ay, float az)
   }
 }
 
+// Used for troubleshooting purposes when intial code write up
 void display_Number_Loops()
 {
   Serial.print("LOOP : ");
@@ -129,13 +134,14 @@ void setup()
   // Serial to display data
   Serial.begin(115200);
 
-  // Waits for serial connection
+  // Waits for serial connection | Not really sure if this is needed
   while (!Serial)
   {
   }
 
-  // Start communication with IMU
+  // Start communication with IMU, Status should return 1 if everything is okay
   status = IMU.begin();
+
   if (status < 0)
   {
     Serial.println("ERROR, Check wiring and ensure Clock speed = 150 Mhz");
@@ -145,6 +151,7 @@ void setup()
     {
     }
   }
+  // "Prints" out the header needed for the CSV file
   Serial.println("aX,aY,aZ,gX,gY,gZ");
   calibrate();
 }
@@ -156,6 +163,7 @@ void loop()
   {
     if (motionDetected(ax, ay, az))
     {
+      // Resets the counter
       samples_Read = 0;
     }
 
@@ -175,7 +183,7 @@ void loop()
         samples_Read++;
         delay(10);
 
-        // If the sample_Read counter hits 119 --> Reset counter --> Insert blank line for CSV file
+        // Once the sample_Read counter hits 119 --> Counter resets --> Blank line inserted in log/csv file
         if (samples_Read == number_Samples)
         {
           samples_Read = 0;
